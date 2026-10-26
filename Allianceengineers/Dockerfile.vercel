@@ -1,0 +1,11 @@
+FROM dunglas/frankenphp:1-php8.4-alpine
+
+RUN install-php-extensions pdo_mysql
+WORKDIR /app
+COPY . /app
+
+# Ensure the app's upload folder exists; files written here are NOT durable on Vercel.
+RUN mkdir -p /app/uploads && chown -R www-data:www-data /app/uploads
+COPY Caddyfile /etc/caddy/Caddyfile
+ENV PORT=80
+CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]
